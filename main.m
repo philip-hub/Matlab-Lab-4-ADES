@@ -16,13 +16,13 @@ fprintf(" m: %4.2f, ",m)
 fprintf("b: %4.2f\n",b)
 
 vFit=height*m+b;
-
+% Figure A1
 % Voltage vs height, tank upper
-% figure
-% plot(height, vFit, 'k', height, v, "--r");
-% xlabel("height (in)")
-% ylabel("voltage (v)")
-% legend("Fit Data","Experimental Data")
+figure
+plot(height, vFit, 'k', height, v, "or");
+xlabel("height (in)")
+ylabel("voltage (v)")
+legend("Fit Data","Experimental Data")
 
 % upper tank data
 upperData = readmatrix("upper_cleaned.csv");
@@ -55,11 +55,12 @@ fprintf(" m2: %4.2f, ",m2)
 fprintf("b2: %4.2f\n",b2)
 
 
-% figure
-% plot(height2, vFit2, 'k', height2, v2, "--r");
-% xlabel("height (in)")
-% ylabel("voltage (v)")
-% legend("Fit Data","Experimental Data")
+% Figure A2
+figure
+plot(height2, vFit2, 'k', height2, v2, "or");
+xlabel("height (in)")
+ylabel("voltage (v)")
+legend("Fit Data","Experimental Data")
 
 lowerData = readmatrix("lower2_cleaned.csv");
 
