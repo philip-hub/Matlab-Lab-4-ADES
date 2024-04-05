@@ -6,17 +6,18 @@ close all
 height = (1:9)';
 v = [1.46 1.56 1.69 1.81 1.91 2.04 2.16 2.27 2.37]';
 
-% 
+% fit voltage vs height data
 fit = polyfit(height,v,1);
 m=fit(1);
 b=fit(2);
 
-fprintf("Upper Tank")
-fprintf(" m: %4.2f",m)
-fprintf("b: %4.2f",b)
+fprintf("Upper Tank\n")
+fprintf(" m: %4.2f, ",m)
+fprintf("b: %4.2f\n",b)
 
 vFit=height*m+b;
 
+% Voltage vs height, tank upper
 figure
 plot(height, vFit, 'k', height, v, "--r");
 xlabel("height (in)")
@@ -49,9 +50,9 @@ fit = polyfit(height2,v2,1);
 m2=fit(1);
 b2=fit(2);
 vFit2=height2*m2+b2;
-fprintf("Lower Tank")
-fprintf(" m2: %4.2f",m2)
-fprintf("b2: %4.2f",b2)
+fprintf("Lower Tank\n")
+fprintf(" m2: %4.2f, ",m2)
+fprintf("b2: %4.2f\n",b2)
 
 
 figure
@@ -93,8 +94,16 @@ ylabel("voltage (v)")
 legend("Upper Tank","Lower Tank")
 
 
+%% Fit Cd
+
+
 
 Cd0 = 0.7; % Starting value for fminsearch
+
+% Table 3: SEE with initial Cd
+fprintf("\nWith initial Cd of %.2f\n", Cd0)
+fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_upper(0.7))
+fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_lower(0.7))
 
 options = optimset(@fminsearch);
 options = optimset (options, 'Display', 'iter');
@@ -105,18 +114,22 @@ coeffs_lower = fminsearch(@lab4_perf_index_lower, Cd0, options);
 Cd_upper = coeffs_upper(1);
 Cd_lower = coeffs_lower(1);
 
-% TODO plot tankmodel(Cd1_upper, t) vs actual height, t
+fprintf("Cd_upper: %.3f, ", Cd_upper)
+fprintf("Cd_lower: %.3f\n", Cd_lower)
+
 % Experimental data.
 load tankDataUpper; % We only need this to load from a file
 tdata = tankDataUpper(1,:);
 hdata = tankDataUpper(2,:);
 hmodel = tankmodel_upper(Cd_upper, tdata);
+figure
 plot(tdata, hmodel, tdata, hdata)
 
 load tankDataLower; % We only need this to load from a file
 tdata = tankDataLower(1,:);
 hdata = tankDataLower(2,:);
 hmodel = tankmodel_lower(Cd_lower, tdata);
+figure
 plot(tdata, hmodel, tdata, hdata)
 
 
@@ -142,12 +155,12 @@ g = g*12; % in/s^2
 
 
 % Initial Conditions
-h10 = 7; % in
-h20 = 3; % in
+h10 = 8; % in
+h20 = 4; % in
 
 
 
-tf = 400;     % s
+tf = 90;     % s
 maxstep = 0.01; % s
 tol = 1e-6; % Tolerance for the solver
 
@@ -155,7 +168,7 @@ sim("PreLab_4_sim.slx") % Import Simulink graph
 
 
 
-figure(1) % Voltage graph
+figure % Voltage graph
 plot(time,h1,'b', time,h2, 'r')
 xlabel('Time (s)')
 ylabel('Height (in)')
