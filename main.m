@@ -6,6 +6,7 @@ close all
 height = (1:9)';
 v = [1.46 1.56 1.69 1.81 1.91 2.04 2.16 2.27 2.37]';
 
+% fit voltage vs height data
 fit = polyfit(height,v,1);
 m=fit(1);
 b=fit(2);
@@ -16,6 +17,7 @@ fprintf("b: %4.2f",b)
 
 vFit=height*m+b;
 
+% Voltage vs height, tank upper
 figure
 plot(height, vFit, 'k', height, v, "--r");
 xlabel("height (in)")
@@ -104,7 +106,6 @@ coeffs_lower = fminsearch(@lab4_perf_index_lower, Cd0, options);
 Cd_upper = coeffs_upper(1);
 Cd_lower = coeffs_lower(1);
 
-% TODO plot tankmodel(Cd1_upper, t) vs actual height, t
 % Experimental data.
 load tankDataUpper; % We only need this to load from a file
 tdata = tankDataUpper(1,:);
@@ -119,25 +120,20 @@ hmodel = tankmodel_lower(Cd_lower, tdata);
 plot(tdata, hmodel, tdata, hdata)
 
 
-%Simulink
-
-
-clear all % Clear all yer variables
-% close all % Close yer figure windows
-clc % Clear yer command window
+%% Simulink
 
 %1 for upper tank
 %2 for lower tank
 
 d1=3/8;
 d2=1/4;
-A1 = (pi/4)*d1^2; % in^2
-A2 = (pi/4)*d2^2; % in^2 
-Aout1 = (pi/4)*(0.25^2); % in^2
-Aout2 = (pi/4)*(0.125^2); % in^2
-b1 = 0.5; % in
-b2 = 0.5; % in
-a1 = 3.25; % in
+A1 = (3.5*7.5); % inch^2
+A2 = (3.5*7.5); % inch^2
+Aout1 = (pi/4)*(d1^2); % in^2
+Aout2 = (pi/4)*(d2^2); % in^2
+b1 = 3/4; % in. b = height from bottom of tank to top of orifice
+b2 = 3/4; % in
+a1 = 3.25; % in. a = height from bottom of orifice to bottom of tank
 a2 = 3.25; %in
 Cd1 = Cd_upper;
 Cd2 = Cd_lower;
