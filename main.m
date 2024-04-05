@@ -18,11 +18,11 @@ fprintf("b: %4.2f\n",b)
 vFit=height*m+b;
 
 % Voltage vs height, tank upper
-figure
-plot(height, vFit, 'k', height, v, "--r");
-xlabel("height (in)")
-ylabel("voltage (v)")
-legend("Fit Data","Experimental Data")
+% figure
+% plot(height, vFit, 'k', height, v, "--r");
+% xlabel("height (in)")
+% ylabel("voltage (v)")
+% legend("Fit Data","Experimental Data")
 
 % upper tank data
 upperData = readmatrix("upper_cleaned.csv");
@@ -35,10 +35,10 @@ hdata1 = (vdata1-b)/m;
 tankDataUpper = [tdata1 hdata1]'; % Might need to transpose
 save tankDataUpper;
 
-figure
-plot(tdata1,hdata1)
-ylabel("height (in)")
-xlabel("time (s)")
+% figure
+% plot(tdata1,hdata1)
+% ylabel("height (in)")
+% xlabel("time (s)")
 %35 seconds closest to .5
 
 %lower tank data
@@ -55,11 +55,11 @@ fprintf(" m2: %4.2f, ",m2)
 fprintf("b2: %4.2f\n",b2)
 
 
-figure
-plot(height2, vFit2, 'k', height2, v2, "--r");
-xlabel("height (in)")
-ylabel("voltage (v)")
-legend("Fit Data","Experimental Data")
+% figure
+% plot(height2, vFit2, 'k', height2, v2, "--r");
+% xlabel("height (in)")
+% ylabel("voltage (v)")
+% legend("Fit Data","Experimental Data")
 
 lowerData = readmatrix("lower2_cleaned.csv");
 
@@ -70,10 +70,10 @@ hdata2 = (vdata2-b2)/m2;
 tankDataLower = [tdata2 hdata2]'; % Might need to transpose
 save tankDataLower;
 
-figure
-plot(tdata2, hdata2)
-xlabel("height (in)")
-ylabel("voltage (v)")
+% figure
+% plot(tdata2, hdata2)
+% xlabel("height (in)")
+% ylabel("voltage (v)")
 
 
 
@@ -87,11 +87,11 @@ vdataDown3 = bothData(:,3); %voltage data lower tank
 hdataUp3 = (vdataUp3-b)/m;
 hdataDown3 = (vdataDown3-b2)/m2;
 
-figure
-plot(tdata3, hdataUp3, 'k', tdata3, hdataDown3, "--r");
-xlabel("height (in)")
-ylabel("voltage (v)")
-legend("Upper Tank","Lower Tank")
+% figure
+% plot(tdata3, hdataUp3, 'k', tdata3, hdataDown3, "--r");
+% xlabel("height (in)")
+% ylabel("voltage (v)")
+% legend("Upper Tank","Lower Tank")
 
 
 %% Fit Cd
@@ -100,10 +100,14 @@ legend("Upper Tank","Lower Tank")
 
 Cd0 = 0.7; % Starting value for fminsearch
 
+
+
 % Table 3: SEE with initial Cd
 fprintf("\nWith initial Cd of %.2f\n", Cd0)
 fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_upper(0.7))
 fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_lower(0.7))
+
+
 
 options = optimset(@fminsearch);
 options = optimset (options, 'Display', 'iter');
@@ -120,20 +124,29 @@ fprintf("SEE upper: %.3f\n", lab4_perf_index_upper(Cd_upper))
 fprintf("Cd_lower: %.3f, ", Cd_lower)
 fprintf("SEE lower: %.3f\n", lab4_perf_index_lower(Cd_lower))
 
-% Experimental data.
+% Figure 1 & 2: Data over model response before optimizing Cd
 load tankDataUpper; % We only need this to load from a file
 tdata = tankDataUpper(1,:);
 hdata = tankDataUpper(2,:);
+hmodel_initial = tankmodel_upper(Cd0, tdata);
 hmodel = tankmodel_upper(Cd_upper, tdata);
 figure
-plot(tdata, hmodel, tdata, hdata)
+plot(tdata, hmodel_initial, "--b", tdata, hmodel,"--r",  tdata, hdata, "k")
+xlabel("Time (s)")
+ylabel("Height (in)")
+legend("Initial Model (Upper)", "Optimized Model", "Experimental Response")
 
 load tankDataLower; % We only need this to load from a file
 tdata = tankDataLower(1,:);
 hdata = tankDataLower(2,:);
+hmodel_initial = tankmodel_lower(Cd0, tdata);
 hmodel = tankmodel_lower(Cd_lower, tdata);
 figure
 plot(tdata, hmodel, tdata, hdata)
+plot(tdata, hmodel_initial, "--b", tdata, hmodel, "--r", tdata, hdata, "k")
+xlabel("Time (s)")
+ylabel("Height (in)")
+legend("Initial Model (Lower)", "Optimized Model", "Experimental Response")
 
 
 %% Simulink
@@ -171,12 +184,15 @@ sim("PreLab_4_sim.slx") % Import Simulink graph
 
 
 
-figure % Voltage graph
-plot(time,h1,'b', time,h2, 'r')
+
+
+figure % Double Tanks, simulink and data
+plot(time,h1,'b', time,h2, 'r', tdata3, hdataUp3, '--k', tdata3, hdataDown3, "--r")
 xlabel('Time (s)')
 ylabel('Height (in)')
 set(gcf, 'color', 'w')
-legend('Tank 1', 'Tank 2', "Location", "northeast")
+legend('Upper Tank (Model)', 'Lower Tank (Model)',...
+"Upper Tank (Experimental)","Lower Tank (Experimental)", "Location", "northeast")
 
 
 

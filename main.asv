@@ -100,10 +100,14 @@ legend("Upper Tank","Lower Tank")
 
 Cd0 = 0.7; % Starting value for fminsearch
 
+
+
 % Table 3: SEE with initial Cd
 fprintf("\nWith initial Cd of %.2f\n", Cd0)
 fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_upper(0.7))
 fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_lower(0.7))
+
+
 
 options = optimset(@fminsearch);
 options = optimset (options, 'Display', 'iter');
@@ -115,22 +119,34 @@ Cd_upper = coeffs_upper(1);
 Cd_lower = coeffs_lower(1);
 
 fprintf("Cd_upper: %.3f, ", Cd_upper)
-fprintf("Cd_lower: %.3f\n", Cd_lower)
+fprintf("SEE upper: %.3f\n", lab4_perf_index_upper(Cd_upper))
 
-% Experimental data.
+fprintf("Cd_lower: %.3f, ", Cd_lower)
+fprintf("SEE lower: %.3f\n", lab4_perf_index_lower(Cd_lower))
+
+% Figure 1 & 2: Data over model response before optimizing Cd
 load tankDataUpper; % We only need this to load from a file
 tdata = tankDataUpper(1,:);
 hdata = tankDataUpper(2,:);
+hmodel_initial = tankmodel_upper(Cd0, tdata);
 hmodel = tankmodel_upper(Cd_upper, tdata);
 figure
-plot(tdata, hmodel, tdata, hdata)
+plot(tdata, hmodel_initial, "-b", tdata, hmodel,  tdata, hdata, "k")
+xlabel("Time (s)")
+ylabel("Height (in)")
+legend("Initial Model (Upper)", "Optimized Model", "Experimental Response")
 
 load tankDataLower; % We only need this to load from a file
 tdata = tankDataLower(1,:);
 hdata = tankDataLower(2,:);
+hmodel_initial = tankmodel_lower(Cd0, tdata);
 hmodel = tankmodel_lower(Cd_lower, tdata);
 figure
 plot(tdata, hmodel, tdata, hdata)
+plot(tdata, hmodel_initial,tdata, hmodel, tdata, hdata)
+xlabel("Time (s)")
+ylabel("Height (in)")
+legend("Initial Model (Lower)", "Optimized Model", "Experimental Response")
 
 
 %% Simulink
