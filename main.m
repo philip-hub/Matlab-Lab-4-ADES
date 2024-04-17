@@ -18,7 +18,7 @@ fprintf("b: %4.2f\n",b)
 vFit=height*m+b;
 % Figure A1
 % Voltage vs height, tank upper
-figure
+figure(1)
 plot(height, vFit, 'k', height, v, "or");
 xlabel("height (in)")
 ylabel("voltage (v)")
@@ -65,7 +65,7 @@ fprintf("b2: %4.2f\n",b2)
 
 
 % Figure A2
-figure
+figure(2)
 plot(height2, vFit2, 'k', height2, v2, "or");
 xlabel("height (in)")
 ylabel("voltage (v)")
@@ -160,7 +160,7 @@ tdata = tankDataLower(1,:);
 hdata = tankDataLower(2,:);
 hmodel_initial = tankmodel_lower(Cd0, tdata);
 hmodel = tankmodel_lower(Cd_lower, tdata);
-figure(9)
+figure
 plot(tdata, hmodel, tdata, hdata)
 plot(tdata, hmodel_initial, "--b", tdata, hmodel, "--r", tdata, hdata, "k")
 xlabel("Time (s)")
