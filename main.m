@@ -88,7 +88,7 @@ fprintf("Lower Tank Initial Height: %.2f in\n", hdata2(1))
 
 
 tankDataLower = [tdata2 hdata2]'; % Might need to transpose
-%save tankDataLower;
+save tankDataLower; % For @lab4_perf_index_lower to load
 figure(1)
 plot(tdata2,hdata2)
 ylabel("height (in)")
