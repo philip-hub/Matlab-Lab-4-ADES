@@ -1,7 +1,7 @@
 clc
 clearvars
 close all
-
+%% Upper Tank Voltage to Height
 %all upper tank for fitting
 height = (1:9)';
 v = [1.46 1.56 1.69 1.81 1.91 2.04 2.16 2.27 2.37]';
@@ -24,7 +24,7 @@ xlabel("height (in)")
 ylabel("voltage (v)")
 legend("Fit Data","Experimental Data")
 
-% upper tank data
+%% Upper Tank Draining - Data Import
 upperData = readmatrix("upper_cleaned.csv");
 
 
@@ -32,23 +32,32 @@ tdata1 = upperData(:,1); %time data
 vdata1 = upperData(:,2); %voltage data
 hdata1 = (vdata1-b)/m;
 
+% Crop upper tank data and
+% reset timescale
+hdata1 = hdata1(11:73); 
+tdata1 = tdata1(1:length(hdata1));
+
+fprintf("Upper Tank Initial Height: %.2f in\n", hdata1(1))
+
+
 tankDataUpper = [tdata1 hdata1]'; % Might need to transpose
 save tankDataUpper;
 
-% figure
+% figure(1)
 % plot(tdata1,hdata1)
 % ylabel("height (in)")
 % xlabel("time (s)")
-%35 seconds closest to .5
+% % 35 seconds closest to .5
 
+%% Lower Tank Voltage to Height
 %lower tank data
 
 height2 = (1:9)';
 v2 = [1.51 1.65 1.76 1.86 2.0 2.11 2.22 2.33 2.43]';
 
-fit = polyfit(height2,v2,1);
-m2=fit(1);
-b2=fit(2);
+fit2 = polyfit(height2,v2,1);
+m2=fit2(1);
+b2=fit2(2);
 vFit2=height2*m2+b2;
 fprintf("Lower Tank\n")
 fprintf(" m2: %4.2f, ",m2)
@@ -62,24 +71,32 @@ xlabel("height (in)")
 ylabel("voltage (v)")
 legend("Fit Data","Experimental Data")
 
+%% Lower Tank Draining - Data Import
+
 lowerData = readmatrix("lower2_cleaned.csv");
 
 tdata2 = lowerData(:,1); %time data
 vdata2 = lowerData(:,3); %voltage data
 hdata2 = (vdata2-b2)/m2;
 
+% Crop lower tank data and
+% reset timescale
+hdata2 = hdata2(5:126); 
+tdata2 = tdata2(1:length(hdata2));
+
+fprintf("Lower Tank Initial Height: %.2f in\n", hdata2(1))
+
+
 tankDataLower = [tdata2 hdata2]'; % Might need to transpose
-save tankDataLower;
-
-% figure
-% plot(tdata2, hdata2)
-% xlabel("height (in)")
-% ylabel("voltage (v)")
-
-
+%save tankDataLower;
+figure(1)
+plot(tdata2,hdata2)
+ylabel("height (in)")
+xlabel("time (s)")
+% 35 seconds closest to .5
 
 
-%both tanks
+%% Both Tanks Draining - Data Import
 bothData = readmatrix("both2_cleaned.csv");
 
 tdata3 = bothData(:,1); %time data
@@ -95,7 +112,7 @@ hdataDown3 = (vdataDown3-b2)/m2;
 % legend("Upper Tank","Lower Tank")
 
 
-%% Fit Cd
+%% Fit Cd - Upper and Lower
 
 
 
@@ -109,10 +126,11 @@ fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_upper(0.7))
 fprintf("Upper tank SEE = %.3f\n", lab4_perf_index_lower(0.7))
 
 
-
+% Set options
 options = optimset(@fminsearch);
 options = optimset (options, 'Display', 'iter');
 
+% Use fminsearch, adjusting Cd to minimize SEE
 coeffs_upper = fminsearch(@lab4_perf_index_upper,Cd0,options);
 coeffs_lower = fminsearch(@lab4_perf_index_lower, Cd0, options);
 
@@ -125,7 +143,7 @@ fprintf("SEE upper: %.3f\n", lab4_perf_index_upper(Cd_upper))
 fprintf("Cd_lower: %.3f, ", Cd_lower)
 fprintf("SEE lower: %.3f\n", lab4_perf_index_lower(Cd_lower))
 
-% Figure 1 & 2: Data over model response before optimizing Cd
+% Figure 1 & 2: Data over model response before and after optimizing Cd
 load tankDataUpper; % We only need this to load from a file
 tdata = tankDataUpper(1,:);
 hdata = tankDataUpper(2,:);
@@ -137,12 +155,12 @@ xlabel("Time (s)")
 ylabel("Height (in)")
 legend("Initial Model (Upper)", "Optimized Model", "Experimental Response")
 
-load tankDataLower; % We only need this to load from a file
+%load tankDataLower; % We only need this to load from a file
 tdata = tankDataLower(1,:);
 hdata = tankDataLower(2,:);
 hmodel_initial = tankmodel_lower(Cd0, tdata);
 hmodel = tankmodel_lower(Cd_lower, tdata);
-figure
+figure(9)
 plot(tdata, hmodel, tdata, hdata)
 plot(tdata, hmodel_initial, "--b", tdata, hmodel, "--r", tdata, hdata, "k")
 xlabel("Time (s)")
