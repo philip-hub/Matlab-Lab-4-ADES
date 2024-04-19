@@ -191,7 +191,7 @@ g = g*12; % in/s^2
 
 % Initial Conditions
 h10 = 8; % in
-h20 = 4; % in
+h20 = 4.15; % in
 
 
 
