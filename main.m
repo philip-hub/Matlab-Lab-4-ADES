@@ -147,25 +147,25 @@ fprintf("SEE lower: %.3f\n", lab4_perf_index_lower(Cd_lower))
 load tankDataUpper; % We only need this to load from a file
 tdata = tankDataUpper(1,:);
 hdata = tankDataUpper(2,:);
-hmodel_initial = tankmodel_upper(Cd0, tdata);
+% hmodel_initial = tankmodel_upper(Cd0, tdata);
 hmodel = tankmodel_upper(Cd_upper, tdata);
 figure
-plot(tdata, hmodel_initial, "--b", tdata, hmodel,"--r",  tdata, hdata, "k")
+plot(tdata, hmodel,"--r",  tdata, hdata, "k")
 xlabel("Time (s)")
 ylabel("Height (in)")
-legend("Initial Model (Upper)", "Optimized Model", "Experimental Response")
+legend("Optimized Model", "Experimental Response")
 
 %load tankDataLower; % We only need this to load from a file
 tdata = tankDataLower(1,:);
 hdata = tankDataLower(2,:);
-hmodel_initial = tankmodel_lower(Cd0, tdata);
+% hmodel_initial = tankmodel_lower(Cd0, tdata);
 hmodel = tankmodel_lower(Cd_lower, tdata);
 figure
 plot(tdata, hmodel, tdata, hdata)
-plot(tdata, hmodel_initial, "--b", tdata, hmodel, "--r", tdata, hdata, "k")
+plot(tdata, hmodel, "--r", tdata, hdata, "k")
 xlabel("Time (s)")
 ylabel("Height (in)")
-legend("Initial Model (Lower)", "Optimized Model", "Experimental Response")
+legend("Optimized Model", "Experimental Response")
 
 
 %% Simulink
